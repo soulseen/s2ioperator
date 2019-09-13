@@ -154,6 +154,16 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	if instance.Labels == nil {
 		instance.Labels = make(map[string]string)
 	}
+	if builder.Spec.Config.BuilderImage != "" && builder.Spec.Config.SourceURL != "" {
+		instance.Status.S2iBuildSource.BuilderImage = builder.Spec.Config.BuilderImage
+		instance.Status.S2iBuildSource.SourceUrl = builder.Spec.Config.SourceURL
+		err = r.Status().Update(context.Background(), instance)
+		if err != nil {
+			log.Error(nil, "Failed to update s2irun status", "Namespace", instance.Namespace, "Name", instance.Name)
+			return reconcile.Result{}, err
+		}
+	}
+
 	if v, ok := instance.Labels[S2iRunBuilderLabel]; !ok || v != builder.Name {
 		instance.Labels[S2iRunBuilderLabel] = builder.Name
 		err = r.Update(context.TODO(), instance)
@@ -330,6 +340,7 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	foundPod := pods.Items[0]
 
+	// add more build resource info if needed
 	buildSource := foundPod.Annotations[AnnotationBuildSourceKey]
 	s2iBuildSource := &devopsv1alpha1.S2iBuildSource{}
 	err = json.Unmarshal([]byte(buildSource), s2iBuildSource)
