@@ -53,6 +53,7 @@ const (
 	RegularServiceAccount    = "s2irun"
 	RegularRoleName          = "s2i-regular-role"
 	RegularRoleBinding       = "s2i-regular-rolebinding"
+	DefaultRevisionId        = "master"
 )
 
 /**
@@ -153,15 +154,6 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	if instance.Labels == nil {
 		instance.Labels = make(map[string]string)
-	}
-	if builder.Spec.Config.BuilderImage != "" && builder.Spec.Config.SourceURL != "" {
-		instance.Status.S2iBuildSource.BuilderImage = builder.Spec.Config.BuilderImage
-		instance.Status.S2iBuildSource.SourceUrl = builder.Spec.Config.SourceURL
-		err = r.Status().Update(context.Background(), instance)
-		if err != nil {
-			log.Error(nil, "Failed to update s2irun status", "Namespace", instance.Namespace, "Name", instance.Name)
-			return reconcile.Result{}, err
-		}
 	}
 
 	if v, ok := instance.Labels[S2iRunBuilderLabel]; !ok || v != builder.Name {
@@ -325,7 +317,6 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		instance.Status.RunState = devopsv1alpha1.Unknown
 	}
 
-	// set s2irun status
 	pods := &corev1.PodList{}
 	listOption := &client.ListOptions{}
 	listOption.SetLabelSelector("job-name=" + found.Name)
@@ -340,7 +331,6 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 	}
 	foundPod := pods.Items[0]
 
-	// add more build resource info if needed
 	buildSource := foundPod.Annotations[AnnotationBuildSourceKey]
 	s2iBuildSource := &devopsv1alpha1.S2iBuildSource{}
 	err = json.Unmarshal([]byte(buildSource), s2iBuildSource)
@@ -351,6 +341,45 @@ func (r *ReconcileS2iRun) Reconcile(request reconcile.Request) (reconcile.Result
 		err = json.Unmarshal([]byte(buildResult), s2iBuildResult)
 		instance.Status.S2iBuildResult = s2iBuildResult
 	}
+
+	//// TODO add more build resource info if needed
+	//buildSource := foundPod.Annotations[AnnotationBuildSourceKey]
+	//s2iBuildSource := &devopsv1alpha1.S2iBuildSource{}
+	//err = json.Unmarshal([]byte(buildSource), s2iBuildSource)
+	//instance.Status.S2iBuildSource = s2iBuildSource
+	//if err != nil {
+	//	return reconcile.Result{}, err
+	//}
+	//if builder.Spec.Config.IsBinaryURL == true {
+	//	log.Info("add b2i source info")
+	//	instance.Status.S2iBuildSource.BinarySize = s2iBuildSource.BinarySize
+	//	instance.Status.S2iBuildSource.BinaryName = s2iBuildSource.BinaryName
+	//} else {
+	//	log.Info("add s2i source info: ")
+	//	log.Info(s2iBuildSource.CommitterEmail)
+	//	instance.Status.S2iBuildSource.CommitterEmail = s2iBuildSource.CommitterEmail
+	//	instance.Status.S2iBuildSource.CommitterName = s2iBuildSource.CommitterName
+	//	instance.Status.S2iBuildSource.CommitID = s2iBuildSource.CommitID
+	//}
+	// set build resource info
+	//instance.Status.S2iBuildSource.BuilderImage = builder.Spec.Config.BuilderImage
+	//instance.Status.S2iBuildSource.SourceUrl = builder.Spec.Config.SourceURL
+	//instance.Status.S2iBuildSource.Description = builder.Spec.Config.Description
+	//if builder.Spec.Config.RevisionId == "" {
+	//	instance.Status.S2iBuildSource.RevisionId = DefaultRevisionId
+	//} else {
+	//	instance.Status.S2iBuildSource.RevisionId = builder.Spec.Config.RevisionId
+	//}
+	//
+	//if instance.Status.RunState == devopsv1alpha1.Successful {
+	//	buildResult := foundPod.Annotations[AnnotationBuildResultKey]
+	//	s2iBuildResult := &devopsv1alpha1.S2iBuildResult{}
+	//	err = json.Unmarshal([]byte(buildResult), s2iBuildResult)
+	//	if err != nil {
+	//		return reconcile.Result{}, err
+	//	}
+	//	instance.Status.S2iBuildResult = s2iBuildResult
+	//}
 
 	// if job finished, scale workloads
 	if instance.Status.RunState == devopsv1alpha1.Successful || instance.Status.RunState == devopsv1alpha1.Failed {
