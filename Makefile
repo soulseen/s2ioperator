@@ -10,7 +10,7 @@ test: fmt vet
 
 # Build manager binary
 manager: generate fmt manifests vet
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w" -o bin/manager github.com/kubesphere/s2ioperator/cmd/manager
+	CGO_ENABLED=0 go build -ldflags "-w" -o bin/manager github.com/kubesphere/s2ioperator/cmd/manager
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet
