@@ -37,7 +37,7 @@ kubectl -n kubesphere-devops-system get pods -w
 
 ## Quick Start
 
-Here are [quick-start](https://github.com/kubesphere/s2ioperator/blob/master/docs/QUICK-START.md) to walk you through the process, with a quick overview of the core features of S2I Operator that helps you to get familiar with it.
+Here is [quick-start](https://github.com/kubesphere/s2ioperator/blob/master/docs/QUICK-START.md) to walk you through the process, with a quick overview of the core features of S2I Operator that helps you to get familiar with it.
 
 If you want to get a better experience with S2I Operator, perhaps you can use S2I ci/cd in [Kubesphere](https://github.com/kubesphere/kubesphere).
 
