@@ -1,7 +1,7 @@
 # S2I Operator
 
 [![License](http://img.shields.io/badge/license-apache%20v2-blue.svg)](https://github.com/KubeSphere/s2irun/blob/master/LICENSE)
-![Go Report Card](https://goreportcard.com/report/github.com/kubesphere/s2ioperator)
+![Go Report Card](https://goreportcard.com/badge/github.com/kubesphere/s2ioperator)
 
 ## 介绍
 `S2I`( source to image )是一款由Openshift开发、自动将代码容器化的工具（<https://github.com/openshift/source-to-image>），通过预置的模板来支持多种语言和框架，诸如Java，Nodejs, python等等。S2I Operator将S2I引入到kubernetes中，相比原生命令行的使用方式，有下面几个优点：
