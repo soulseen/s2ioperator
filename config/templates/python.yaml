@@ -12,13 +12,9 @@ metadata:
 spec:
   containerInfo:
     - builderImage: kubespheredev/python-36-centos7
-      buildVolumes: ["s2i_python36_cache:/opt/app-root/lib"]
     - builderImage: kubespheredev/python-35-centos7
-      buildVolumes: ["s2i_python35_cache:/opt/app-root/lib"]
     - builderImage: kubespheredev/python-34-centos7
-      buildVolumes: ["s2i_python34_cache:/opt/app-root/lib"]
     - builderImage: kubespheredev/python-27-centos7
-      buildVolumes: ["s2i_python27_cache:/opt/app-root/lib"]
   environment:
     - key: APP_SCRIPT
       type: string

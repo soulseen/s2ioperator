@@ -12,11 +12,8 @@ metadata:
 spec:
   containerInfo:
     - builderImage: kubespheredev/nodejs-8-centos7
-      buildVolumes: ["s2i_nodejs_cache:/opt/app-root/src/.npm"]
     - builderImage: kubespheredev/nodejs-6-centos7
-      buildVolumes: ["s2i_nodejs_cache:/opt/app-root/src/.npm"]
     - builderImage: kubespheredev/nodejs-4-centos7
-      buildVolumes: ["s2i_nodejs_cache:/opt/app-root/src/.npm"]
   environment:
     - key: NODE_ENV
       type: string
